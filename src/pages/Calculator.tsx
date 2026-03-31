@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import Layout from '@/components/layout/Layout';
 import NumberCard from '@/components/numerology/NumberCard';
-import { calculateLifePath, calculateDestiny, calculateSoulNumber, calculatePersonality, numberDescriptions } from '@/lib/numerology';
+import { calculateLifePath, calculateDestiny, calculateSoulNumber, calculatePersonality, calculatePersonalYear, numberDescriptions, personalYearDescriptions } from '@/lib/numerology';
 import Icon from '@/components/ui/icon';
 
 interface Result {
@@ -9,6 +9,7 @@ interface Result {
   destiny: number;
   soul: number;
   personality: number;
+  personalYear: number;
 }
 
 const Calculator = () => {
@@ -23,7 +24,8 @@ const Calculator = () => {
     const destiny = name ? calculateDestiny(name) : 0;
     const soul = name ? calculateSoulNumber(name) : 0;
     const personality = name ? calculatePersonality(name) : 0;
-    setResult({ lifePath, destiny, soul, personality });
+    const personalYear = calculatePersonalYear(birthDate);
+    setResult({ lifePath, destiny, soul, personality, personalYear });
     setSaved(false);
   };
 
@@ -106,6 +108,7 @@ const Calculator = () => {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {[
                 { label: 'Число жизненного пути', value: result.lifePath, icon: '◉' },
+                { label: `Личный год ${new Date().getFullYear()}`, value: result.personalYear, icon: '✧' },
                 ...(name ? [
                   { label: 'Число судьбы', value: result.destiny, icon: '✦' },
                   { label: 'Число души', value: result.soul, icon: '◈' },
@@ -135,6 +138,36 @@ const Calculator = () => {
                   ✦ Число судьбы — {result.destiny}
                 </h3>
                 <NumberCard info={numberDescriptions[result.destiny]} compact />
+              </div>
+            )}
+
+            {personalYearDescriptions[result.personalYear] && (
+              <div>
+                <h3 className="font-cinzel text-purple-300 text-sm tracking-widest uppercase mb-4">
+                  ✧ Личный год {new Date().getFullYear()} — вибрация {result.personalYear}
+                </h3>
+                <div className="mystic-card p-6">
+                  <div className="flex items-start gap-4 mb-4">
+                    <div className="number-badge text-yellow-300 flex-shrink-0">{result.personalYear}</div>
+                    <div>
+                      <h4 className="font-cinzel text-yellow-300 text-lg font-semibold">
+                        {personalYearDescriptions[result.personalYear].title}
+                      </h4>
+                      <p className="text-purple-400 text-xs mt-1">
+                        {personalYearDescriptions[result.personalYear].theme}
+                      </p>
+                    </div>
+                  </div>
+                  <p className="text-purple-100/80 text-sm leading-relaxed mb-4">
+                    {personalYearDescriptions[result.personalYear].description}
+                  </p>
+                  <div className="bg-purple-900/40 rounded-lg p-4 border border-yellow-800/30">
+                    <p className="text-xs text-yellow-400 font-cinzel tracking-wide mb-1">✦ Совет на год</p>
+                    <p className="text-purple-200/80 text-sm">
+                      {personalYearDescriptions[result.personalYear].advice}
+                    </p>
+                  </div>
+                </div>
               </div>
             )}
           </div>
